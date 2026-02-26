@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuesioner Identifikasi Kepribadian: Introvert, Ekstrovert, Ambivert</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+            padding: 30px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-top: 0;
+            border-bottom: 3px solid #764ba2;
+            padding-bottom: 15px;
+        }
+        .description {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+        .question {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border-left: 5px solid #764ba2;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .question p {
+            font-weight: 600;
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: #2c3e50;
+            font-size: 1.1em;
+        }
+        .options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: space-between;
+        }
+        .option-item {
+            flex: 1;
+            min-width: 120px;
+            text-align: center;
+        }
+        .option-item input[type="radio"] {
+            display: none;
+        }
+        .option-item label {
+            display: block;
+            background: white;
+            padding: 10px 5px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9em;
+            font-weight: 500;
+            color: #555;
+        }
+        .option-item input[type="radio"]:checked + label {
+            background: #764ba2;
+            border-color: #764ba2;
+            color: white;
+            box-shadow: 0 4px 10px rgba(118, 75, 162, 0.3);
+        }
+        .option-item label:hover {
+            border-color: #764ba2;
+        }
+        .button-container {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            justify-content: center;
+        }
+        button {
+            padding: 15px 30px;
+            font-size: 1.1em;
+            font-weight: 600;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        button#submitBtn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            flex: 2;
+        }
+        button#resetBtn {
+            background: #e0e0e0;
+            color: #333;
+            flex: 1;
+        }
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        .result-card {
+            margin-top: 40px;
+            padding: 25px;
+            border-radius: 15px;
+            background: linear-gradient(145deg, #f0f0f0, #ffffff);
+            border: 2px solid #764ba2;
+            display: none;
+        }
+        .result-card.show {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .result-title {
+            font-size: 2em;
+            text-align: center;
+            margin: 0 0 10px 0;
+            color: #2c3e50;
+        }
+        .result-subtitle {
+            text-align: center;
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            padding: 10px;
+            border-radius: 30px;
+            font-weight: bold;
+        }
+        .result-description {
+            line-height: 1.8;
+            color: #2d3436;
+            text-align: justify;
+            padding: 15px;
+            background: rgba(255,255,255,0.7);
+            border-radius: 10px;
+        }
+        .suggestions {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e8f4fd;
+            border-radius: 10px;
+            border-left: 5px solid #2980b9;
+        }
+        .suggestions h4 {
+            margin-top: 0;
+            color: #2980b9;
+        }
+        .score-info {
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+            background: #f1f1f1;
+            padding: 8px;
+            border-radius: 20px;
+        }
+        .footer-note {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.8em;
+            color: #aaa;
+        }
+        .warning-message {
+            color: #e74c3c;
+            text-align: center;
+            margin-top: 10px;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧠 Tes Kepribadian: Introvert, Ekstrovert, atau Ambivert?</h1>
+        <div class="description">
+            Jawablah 15 pertanyaan di bawah ini dengan jujur sesuai dengan diri Anda. <br>
+            Pilih dari skala 1 (Sangat Tidak Setuju) hingga 5 (Sangat Setuju).
+        </div>
+
+        <form id="quizForm">
+            <!-- JS akan meng-generate soal di sini -->
+        </form>
+
+        <div class="button-container">
+            <button type="button" id="submitBtn">🔍 Lihat Hasil & Saran</button>
+            <button type="button" id="resetBtn">↻ Reset</button>
+        </div>
+        <div id="warning" class="warning-message"></div>
+
+        <div id="result" class="result-card">
+            <h2 class="result-title">📊 Hasil Identifikasi</h2>
+            <div id="scoreDisplay" class="score-info"></div>
+            <div id="personalityType" class="result-subtitle"></div>
+            <div id="personalityDesc" class="result-description"></div>
+            <div id="suggestionsBox" class="suggestions"></div>
+        </div>
+        <div class="footer-note">
+            *Kuesioner ini bersifat indikatif dan tidak menggantikan diagnosis profesional.
+        </div>
+    </div>
+
+    <script>
+        // Daftar pertanyaan (15 soal mendalam)
+        const questions = [
+            "1. Setelah menghabiskan waktu berjam-jam bersama banyak orang, saya merasa perlu menyendiri untuk 'mengisi ulang energi'.",
+            "2. Saya lebih suka berkomunikasi melalui pesan teks atau email daripada bertemu langsung atau telepon.",
+            "3. Saya merasa bersemangat dan mendapatkan energi ketika berada di acara sosial yang ramai (pesta, konser, gathering).",
+            "4. Saya lebih suka bekerja dalam kelompok dan berdiskusi dengan banyak orang daripada bekerja sendiri.",
+            "5. Saya cenderung berpikir terlebih dahulu sebelum berbicara (saya lebih suka merenung di dalam hati).",
+            "6. Saya mudah memulai percakapan dengan orang asing di tempat umum.",
+            "7. Saya merasa lelah dan kewalahan jika harus bersosialisasi tanpa jeda dalam waktu lama.",
+            "8. Saya lebih suka memiliki beberapa teman dekat daripada banyak teman tetapi hubungannya biasa saja.",
+            "9. Saya sering menjadi pusat perhatian atau 'life of the party' dalam suatu pertemuan.",
+            "10. Saya menikmati waktu luang dengan membaca, menulis, atau hobi solo lainnya.",
+            "11. Saya cepat bosan jika harus menyendiri terlalu lama dan merasa perlu mencari keramaian.",
+            "12. Orang lain sering menggambarkan saya sebagai pendengar yang baik dan pribadi yang tenang.",
+            "13. Saya merasa percaya diri dan nyaman saat presentasi di depan banyak orang.",
+            "14. Saya butuh waktu sendiri untuk memproses pikiran dan perasaan setelah kejadian penting.",
+            "15. Saya lebih suka liburan ke tempat yang ramai dan interaktif daripada tempat yang sepi dan tenang."
+        ];
+
+        // Inisialisasi form dengan pertanyaan
+        const formContainer = document.getElementById('quizForm');
+        questions.forEach((q, index) => {
+            const questionDiv = document.createElement('div');
+            questionDiv.className = 'question';
+            questionDiv.innerHTML = `
+                <p>${q}</p>
+                <div class="options">
+                    <div class="option-item">
+                        <input type="radio" name="q${index}" id="q${index}_1" value="1">
+                        <label for="q${index}_1">1 ❌ STS</label>
+                    </div>
+                    <div class="option-item">
+                        <input type="radio" name="q${index}" id="q${index}_2" value="2">
+                        <label for="q${index}_2">2 ⚠️ TS</label>
+                    </div>
+                    <div class="option-item">
+                        <input type="radio" name="q${index}" id="q${index}_3" value="3">
+                        <label for="q${index}_3">3 😐 N</label>
+                    </div>
+                    <div class="option-item">
+                        <input type="radio" name="q${index}" id="q${index}_4" value="4">
+                        <label for="q${index}_4">4 ✅ S</label>
+                    </div>
+                    <div class="option-item">
+                        <input type="radio" name="q${index}" id="q${index}_5" value="5">
+                        <label for="q${index}_5">5 🔥 SS</label>
+                    </div>
+                </div>
+            `;
+            formContainer.appendChild(questionDiv);
+        });
+
+        // Fungsi untuk menghitung skor (dengan pembalikan skor untuk soal ekstrovert)
+        function hitungSkor() {
+            let totalSkor = 0;
+            // Indeks soal yang perlu di-reverse (soal ekstrovert: semakin setuju, semakin tinggi skor ekstrovert, jadi untuk skala introvert kita reverse)
+            // Tapi karena kita ingin skor tinggi mengarah ke Introvert, maka soal ekstrovert harus di-reverse.
+            // Soal bernomor (dari 0): 2,3,5,8,10,12,14 adalah ekstrovert? Mari kita periksa.
+            // Saya akan tentukan: soal dengan kecenderungan Ekstrovert: 2,3,5,8,10,12,14? Tidak, itu kacau. Mari analisis ulang.
+
+            // Penentuan: 
+            // Soal Introvert (I): 1,4,6,7,9,11,13? (saya akan buat agar balance)
+            // Cara mudah: Saya buat aturan: Skor akhir tinggi = Introvert, rendah = Ekstrovert.
+            // Maka soal yang bernuansa Ekstrovert harus di-reverse (nilai 5 jadi 1, 4 jadi 2, dst).
+            
+            // Daftar indeks soal yang bernuansa Ekstrovert (butir favorable Ekstrovert):
+            // - Soal 3: "Saya merasa bersemangat...di acara sosial" (E)
+            // - Soal 4: "Saya lebih suka bekerja dalam kelompok" (E)
+            // - Soal 6: "Saya mudah memulai percakapan" (E)
+            // - Soal 9: "Saya sering menjadi pusat perhatian" (E)
+            // - Soal 11: "Saya cepat bosan jika menyendiri" (E)
+            // - Soal 13: "Saya percaya diri presentasi di depan banyak orang" (E)
+            // - Soal 15: "Liburan ke tempat ramai" (E)
+            // Total 7 soal E.
+            // Sisanya (8 soal) adalah Introvert: 1,2,5,7,8,10,12,14.
+            const ekstrovertIndices = [2,3,5,8,10,12,14]; // index ke-2,3,5,8,10,12,14 (soal ke-3,4,6,9,11,13,15)
+
+            for (let i = 0; i < questions.length; i++) {
+                const radios = document.getElementsByName(`q${i}`);
+                let selectedValue = null;
+                for (let radio of radios) {
+                    if (radio.checked) {
+                        selectedValue = parseInt(radio.value);
+                        break;
+                    }
+                }
+                if (selectedValue === null) {
+                    return null; // Ada soal yang belum dijawab
+                }
+                
+                // Jika ini adalah soal ekstrovert, lakukan reverse scoring (5->1, 4->2, 3->3, 2->4, 1->5)
+                if (ekstrovertIndices.includes(i)) {
+                    selectedValue = 6 - selectedValue; // Membalik nilai
+                }
+                
+                totalSkor += selectedValue;
+            }
+            return totalSkor;
+        }
+
+        // Fungsi untuk menentukan tipe kepribadian berdasarkan skor
+        function getPersonalityType(score) {
+            // Rentang skor: min 15 (sangat Ekstrovert) , max 75 (sangat Introvert)
+            // Tengah-tengah: 45
+            if (score >= 60) {
+                return {
+                    type: "INTROVERT",
+                    color: "#3498db",
+                    desc: "Anda cenderung INTROVERT. Anda adalah pribadi yang lebih suka lingkungan tenang dan tidak terlalu ramai. Anda mendapatkan energi dari waktu menyendiri dan lebih nyaman dengan interaksi sosial yang intim atau dalam kelompok kecil. Pikiran Anda kaya akan dunia internal, dan Anda cenderung reflektif serta mendalam dalam berpikir."
+                };
+            } else if (score <= 30) {
+                return {
+                    type: "EKSTROVERT",
+                    color: "#e67e22",
+                    desc: "Anda cenderung EKSTROVERT. Anda adalah pribadi yang 'hidup' dalam interaksi sosial. Anda mendapatkan energi dari keramaian, mudah bergaul, dan senang menjadi pusat perhatian. Anda cenderung bertindak dahulu baru berpikir, dan menyukai variasi serta kegiatan yang melibatkan banyak orang."
+                };
+            } else {
+                return {
+                    type: "AMBIVERT",
+                    color: "#27ae60",
+                    desc: "Anda cenderung AMBIVERT. Anda memiliki keseimbangan antara sifat introvert dan ekstrovert. Anda bisa menikmati keramaian seperti halnya ekstrovert, tetapi juga sangat menghargai waktu menyendiri seperti introvert. Fleksibilitas ini membuat Anda mudah beradaptasi di berbagai situasi sosial dan menjadi penengah yang baik."
+                };
+            }
+        }
+
+        // Fungsi untuk mendapatkan saran berdasarkan tipe dan skor
+        function getSuggestions(type, score) {
+            if (type === "INTROVERT") {
+                return "💡 <strong>Saran untuk Introvert:</strong> Pastikan Anda menyediakan waktu sendiri secara rutin untuk 'mengisi ulang baterai'. Jangan ragu untuk menetapkan batasan dalam bersosialisasi. Manfaatkan kekuatan Anda dalam mendengarkan dan berpikir mendalam untuk membangun hubungan yang berkualitas. Cari lingkungan kerja atau belajar yang tidak terlalu bising. Ingat, menjadi introvert adalah kekuatan, bukan kelemahan.";
+            } else if (type === "EKSTROVERT") {
+                return "💡 <strong>Saran untuk Ekstrovert:</strong> Carilah lingkungan yang merangsang dan interaktif agar Anda tidak cepat bosan. Manfaatkan energi sosial Anda untuk networking dan kolaborasi. Namun, cobalah sesekali melatih diri untuk menikmati kesendirian agar Anda lebih seimbang dan tidak terlalu bergantung pada stimulasi eksternal. Hargai juga kebutuhan orang lain yang mungkin berbeda dari Anda.";
+            } else {
+                return "💡 <strong>Saran untuk Ambivert:</strong> Anda adalah 'mata-mata' ganda yang hebat! Manfaatkan fleksibilitas Anda untuk menjadi jembatan antara berbagai tipe kepribadian. Kenali kapan Anda perlu menyendiri dan kapan perlu bersosialisasi agar tetap seimbang. Jangan sampai terlalu memaksakan diri di salah satu sisi karena Anda mampu menyesuaikan. Kembangkan kedua sisi sesuai kebutuhan situasi.";
+            }
+        }
+
+        // Event listener untuk submit
+        document.getElementById('submitBtn').addEventListener('click', function() {
+            const warningDiv = document.getElementById('warning');
+            const skor = hitungSkor();
+
+            if (skor === null) {
+                warningDiv.innerText = "⚠️ Harap jawab semua pertanyaan terlebih dahulu!";
+                return;
+            }
+            warningDiv.innerText = ""; // Hapus warning
+
+            const personality = getPersonalityType(skor);
+            const suggestions = getSuggestions(personality.type, skor);
+
+            // Tampilkan hasil
+            document.getElementById('scoreDisplay').innerHTML = `Skor Anda: <strong>${skor}</strong> (dari rentang 15 - 75)`;
+            const typeEl = document.getElementById('personalityType');
+            typeEl.innerText = personality.type;
+            typeEl.style.backgroundColor = personality.color;
+            typeEl.style.color = "white";
+            document.getElementById('personalityDesc').innerHTML = personality.desc;
+            document.getElementById('suggestionsBox').innerHTML = suggestions;
+
+            document.getElementById('result').classList.add('show');
+            
+            // Scroll ke hasil
+            document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // Event listener untuk reset
+        document.getElementById('resetBtn').addEventListener('click', function() {
+            // Reset semua radio button
+            for (let i = 0; i < questions.length; i++) {
+                const radios = document.getElementsByName(`q${i}`);
+                for (let radio of radios) {
+                    radio.checked = false;
+                }
+            }
+            // Sembunyikan hasil
+            document.getElementById('result').classList.remove('show');
+            document.getElementById('warning').innerText = "";
+        });
+    </script>
+</body>
+</html>
